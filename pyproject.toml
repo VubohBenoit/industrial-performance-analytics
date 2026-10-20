@@ -1,0 +1,18 @@
+[project]
+name = "industrial-performance-analytics"
+version = "1.0.0"
+description = "Production, quality and downtime analytics pipeline (Python + SQL + Power BI)"
+requires-python = ">=3.11"
+dependencies = [
+    "pandas>=2.2",
+    "numpy>=1.26",
+    "matplotlib>=3.8",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "nbformat", "nbconvert", "ipykernel"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-q"

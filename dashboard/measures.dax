@@ -1,0 +1,125 @@
+// =====================================================================
+// Mesures DAX — Industrial Performance Analytics
+// ⚠️ NON VALIDÉES dans Power BI Desktop : écrites pour le modèle décrit dans
+// dashboard/README.md mais jamais exécutées ici (Power BI Desktop indisponible
+// dans l'environnement de construction). Les valeurs attendues sont celles de
+// reports/sql_results/*.csv et data/processed/kpi_by_machine.csv : comparez-les
+// après import (checklist de recette dans dashboard/README.md).
+//
+// Table de mesures recommandée : "_Measures" (table vide créée via "Saisir des données").
+// Prérequis : dim_date[full_date] typé Date et dim_date marquée « table de dates ».
+// =====================================================================
+
+// ---------- Volumes -------------------------------------------------
+Input Units   = SUM ( fact_production_daily[input_units] )
+Output Units  = SUM ( fact_production_daily[output_units] )
+Defect Units  = SUM ( fact_production_daily[defect_units] )
+
+// ---------- Temps (heures) ------------------------------------------
+Production Hours   = SUM ( fact_production_daily[production_h] )
+Perf Loss Hours    = SUM ( fact_production_daily[perf_loss_h] )
+Downtime Hours     = SUM ( fact_production_daily[downtime_h] )
+Scheduled Hours    = SUM ( fact_production_daily[scheduled_h] )
+Idle Hours         = SUM ( fact_production_daily[idle_h] )
+Run Hours          = [Production Hours] + [Perf Loss Hours]
+Loading Hours      = [Run Hours] + [Downtime Hours]   // idle et arrêts programmés exclus
+
+Downtime Events    = SUM ( fact_production_daily[downtime_events] )
+Avg Downtime (min) = DIVIDE ( [Downtime Hours] * 60, [Downtime Events] )
+
+// ---------- Qualité -------------------------------------------------
+// ⚠️ Sur compteurs PIADE : écart (pi - po) agrégé, PAS un taux de rebut démontré (voir docs/kpi_definitions.md)
+Defect Rate = DIVIDE ( [Defect Units], [Input Units] )
+Quality     = 1 - [Defect Rate]
+Defect Rate vs Fleet =
+    [Defect Rate] - CALCULATE ( [Defect Rate], ALLSELECTED ( dim_machine ) )
+
+// ---------- Disponibilité / performance / OEE proxy -----------------
+Availability = DIVIDE ( [Run Hours], [Loading Hours] )
+
+Output per Run Hour = DIVIDE ( [Output Units], [Run Hours] )
+
+// Capacité de référence = vitesse nominale EMPIRIQUE (P95) x heures de charge.
+// Ce n'est PAS un objectif fourni par l'entreprise.
+Reference Capacity =
+    SUMX (
+        fact_production_daily,
+        RELATED ( dim_machine[nominal_speed] )
+            * ( fact_production_daily[production_h] + fact_production_daily[perf_loss_h] + fact_production_daily[downtime_h] )
+    )
+Reference Attainment = DIVIDE ( [Output Units], [Reference Capacity] )
+
+// Indice de performance RELATIF (pas la Performance OEE normative : pas de cycle idéal validé).
+Performance Index =
+    DIVIDE (
+        [Input Units],
+        SUMX (
+            fact_production_daily,
+            RELATED ( dim_machine[nominal_speed] )
+                * ( fact_production_daily[production_h] + fact_production_daily[perf_loss_h] )
+        )
+    )
+
+// Proxy indicatif = Disponibilité x min(Performance relative ; 1) x Qualité.
+OEE Proxy = [Availability] * MIN ( [Performance Index], 1 ) * [Quality]
+
+// ---------- Causes d'arrêt (fact_downtime) --------------------------
+Alarm Downtime Hours = DIVIDE ( SUM ( fact_downtime[duration_min] ), 60 )
+Alarm Events         = COUNTROWS ( fact_downtime )
+
+Alarm Share =
+    DIVIDE ( [Alarm Downtime Hours], CALCULATE ( [Alarm Downtime Hours], ALLSELECTED ( dim_alarm ) ) )
+
+Alarm Pareto Cum % =
+    VAR cur   = [Alarm Downtime Hours]
+    VAR total = CALCULATE ( [Alarm Downtime Hours], ALLSELECTED ( dim_alarm ) )
+    RETURN
+        DIVIDE (
+            SUMX (
+                FILTER ( ALLSELECTED ( dim_alarm[alarm_code] ), [Alarm Downtime Hours] >= cur ),
+                [Alarm Downtime Hours]
+            ),
+            total
+        )
+
+// ---------- Classements ---------------------------------------------
+Downtime Rank =
+    RANKX ( ALLSELECTED ( dim_machine[machine_id] ), [Downtime Hours], , DESC, DENSE )
+Defect Rate Rank =
+    RANKX ( ALLSELECTED ( dim_machine[machine_id] ), [Defect Rate], , DESC, DENSE )
+
+// ---------- Comparaisons temporelles --------------------------------
+// Les données ne couvrent que quelques mois : pas de comparaison N-1 (non significative).
+Downtime Hours PM =
+    CALCULATE ( [Downtime Hours], DATEADD ( dim_date[full_date], -1, MONTH ) )
+Downtime Hours MoM Δ = [Downtime Hours] - [Downtime Hours PM]
+
+Output Units PM =
+    CALCULATE ( [Output Units], DATEADD ( dim_date[full_date], -1, MONTH ) )
+Output MoM % = DIVIDE ( [Output Units] - [Output Units PM], [Output Units PM] )
+
+Output 7D Avg =
+    AVERAGEX (
+        DATESINPERIOD ( dim_date[full_date], MAX ( dim_date[full_date] ), -7, DAY ),
+        [Output Units]
+    )
+
+Output Units WTD =
+    CALCULATE ( [Output Units], DATESWTD ( dim_date[full_date] ) )
+
+// ---------- Aide à la lecture (cartes / titres dynamiques) ----------
+Worst Machine (Downtime) =
+    VAR t = TOPN ( 1, ALLSELECTED ( dim_machine[machine_id] ), [Downtime Hours], DESC )
+    RETURN CONCATENATEX ( t, dim_machine[machine_id], ", " )
+
+Top Alarm =
+    VAR t = TOPN ( 1, ALLSELECTED ( dim_alarm[alarm_code] ), [Alarm Downtime Hours], DESC )
+    RETURN CONCATENATEX ( t, dim_alarm[alarm_code], ", " )
+
+Attention Text =
+    "Machine la plus arrêtée : " & [Worst Machine (Downtime)]
+        & " | Cause principale : " & [Top Alarm]
+        & " | Taux de défauts : " & FORMAT ( [Defect Rate], "0.00%" )
+
+Data Disclaimer =
+    "Source : PIADE (Univ. Padoue, CC BY 4.0) — 5 machines d'emballage, 2020-2022. Écart entrées/sorties = indicatif, non validé comme taux de rebut. Performance = indice relatif."

@@ -1,0 +1,96 @@
+{
+  "rows_raw": 429394,
+  "profile_raw": {
+    "rows": 429394,
+    "columns": [
+      "interval_start",
+      "equipment_ID",
+      "alarm",
+      "type",
+      "start",
+      "end",
+      "elapsed",
+      "pi",
+      "po",
+      "speed",
+      "flag_counter_reset",
+      "flag_counter_gap",
+      "flag_counter_jump"
+    ],
+    "dtypes": {
+      "interval_start": "datetime64[us]",
+      "equipment_ID": "string",
+      "alarm": "string",
+      "type": "string",
+      "start": "datetime64[ns]",
+      "end": "datetime64[ns]",
+      "elapsed": "float64",
+      "pi": "int64",
+      "po": "int64",
+      "speed": "int64",
+      "flag_counter_reset": "bool",
+      "flag_counter_gap": "bool",
+      "flag_counter_jump": "bool"
+    },
+    "missing": {
+      "interval_start": 0,
+      "equipment_ID": 0,
+      "alarm": 0,
+      "type": 0,
+      "start": 0,
+      "end": 0,
+      "elapsed": 0,
+      "pi": 0,
+      "po": 0,
+      "speed": 0,
+      "flag_counter_reset": 0,
+      "flag_counter_gap": 0,
+      "flag_counter_jump": 0
+    },
+    "exact_duplicates": 0,
+    "machines": [
+      "s_1",
+      "s_2",
+      "s_3",
+      "s_4",
+      "s_5"
+    ],
+    "types": {
+      "production": 146795,
+      "performance_loss": 118584,
+      "downtime": 92084,
+      "idle": 50149,
+      "scheduled_downtime": 21782
+    }
+  },
+  "rules": {
+    "R1_exact_duplicates_dropped": 0,
+    "R1b_conflicting_duplicate": 0,
+    "R2_unknown_type": 0,
+    "R3_unparsable_date_or_missing_machine": 0,
+    "R4_end_before_start": 0,
+    "R6_negative_quantity": 0,
+    "R7_po_gt_pi_flagged_kept": 65633,
+    "R5_elapsed_recomputed": 0,
+    "R8_downtime_alarm_set_unknown": 0,
+    "R9_overlap_flagged": 6,
+    "R10_long_duration_flagged_kept": 2261
+  },
+  "quantities_mode": "increments",
+  "rows_clean": 429394,
+  "rows_rejected": 0,
+  "rows_dropped_duplicates": 0,
+  "conservation_ok": true,
+  "date_range": [
+    "2020-01-01 00:05:02.863000",
+    "2022-01-02 00:34:51.646000"
+  ],
+  "machines": [
+    "s_1",
+    "s_2",
+    "s_3",
+    "s_4",
+    "s_5"
+  ],
+  "data_source": "real"
+}

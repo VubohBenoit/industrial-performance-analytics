@@ -1,0 +1,80 @@
+{
+  "mode": "increments",
+  "S1_halve_top_alarm": {
+    "machine": "s_1",
+    "alarm": "A_065",
+    "alarm_downtime_h": 857.9,
+    "hours_recovered": 429.0,
+    "output_per_run_hour": 3735.3,
+    "extra_output_units": 1602324,
+    "pct_of_machine_output": 4.64,
+    "pct_of_fleet_output": 1.62
+  },
+  "S2_remove_post_downtime_excess_defects": {
+    "status": "non calcul\u00e9 : analyse par \u00e9tat pr\u00e9c\u00e9dent non fiable sur compteurs cumul\u00e9s (mode increments)"
+  },
+  "sensitivity_long_downtime": {
+    "flagged_events": 648,
+    "flagged_hours": 624.0,
+    "flagged_share_of_downtime_pct": 19.8,
+    "machine_ranking_all": {
+      "s_1": 1393.4,
+      "s_2": 573.8,
+      "s_3": 466.3,
+      "s_4": 358.4,
+      "s_5": 355.6
+    },
+    "machine_ranking_without_flagged": {
+      "s_1": 1125.9,
+      "s_2": 448.7,
+      "s_5": 340.5,
+      "s_3": 312.2,
+      "s_4": 296.2
+    },
+    "top3_alarms_all": {
+      "A_065": 857.9,
+      "A_101": 515.2,
+      "A_006": 411.2
+    },
+    "top3_alarms_without_flagged": {
+      "A_065": 687.6,
+      "A_101": 496.6,
+      "A_001": 287.1
+    },
+    "top2_alarms_per_machine": {
+      "s_1": {
+        "A_065": 857.9,
+        "A_066": 150.7
+      },
+      "s_2": {
+        "A_001": 181.1,
+        "A_101": 134.4
+      },
+      "s_3": {
+        "A_006": 233.8,
+        "A_101": 96.2
+      },
+      "s_4": {
+        "A_005": 71.4,
+        "A_006": 64.3
+      },
+      "s_5": {
+        "A_101": 284.5,
+        "A_005": 18.5
+      }
+    },
+    "downtime_events_per_machine": {
+      "s_1": 32614,
+      "s_2": 17361,
+      "s_3": 7805,
+      "s_4": 18250,
+      "s_5": 16054
+    },
+    "downtime_share_top5pct_longest": 0.432,
+    "counter_flags": {
+      "flag_counter_reset": 86,
+      "flag_counter_gap": 1371,
+      "flag_counter_jump": 185
+    }
+  }
+}

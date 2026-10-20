@@ -1,0 +1,27 @@
+{
+  "weekly_cv": 0.41273168677954875,
+  "top_machine": "s_1",
+  "top_machine_share": 0.44269666675170943,
+  "top_alarm": "A_065",
+  "top_alarm_share": 0.2725802634374455,
+  "n_alarms_80": 7,
+  "n_alarms": 132,
+  "worst_defect_machine": "s_4",
+  "worst_defect_rate": 0.00686196240335484,
+  "attainment": {
+    "s_1": 0.7134329241292529,
+    "s_2": 0.5562664561897911,
+    "s_3": 0.7024575467098328,
+    "s_4": 0.543631265338879,
+    "s_5": 0.7386127095069437
+  },
+  "downtime_median_min": 0.8939916666666667,
+  "downtime_p95_min": 6.6808924999999935,
+  "top5pct_share": 0.4316709534708238,
+  "worst_avail_machine": "s_2",
+  "worst_avail_month": "2020-08",
+  "worst_avail": 53.40320383292975,
+  "peak_hour": 8,
+  "peak_hour_ratio": 1.4677103872644552,
+  "peak_weekday": 4
+}

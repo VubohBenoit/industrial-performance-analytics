@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+.venv/
+venv/
+.env
+*.db
+# Données volumineuses ou régénérables
+data/raw/raw_data.csv
+data/processed/
+dashboard/powerbi_data/
+# Fichiers Power BI binaires à ne pas versionner sans besoin
+*.pbix
+.DS_Store

@@ -1,0 +1,13 @@
+{
+  "seed": 20261018,
+  "rows_total": 18056,
+  "faults": {
+    "end_before_start": 12,
+    "po_greater_than_pi": 15,
+    "downtime_without_alarm": 25,
+    "elapsed_mismatch": 8,
+    "negative_quantity": 5,
+    "exact_duplicates": 20,
+    "very_long_downtime_kept_flagged": 4
+  }
+}
